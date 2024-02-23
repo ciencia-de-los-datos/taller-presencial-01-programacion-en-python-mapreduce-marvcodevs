@@ -1,5 +1,5 @@
 #
-# Escriba la función load_input que recive como parámetro un folder y retorna
+# Escriba la función load_input que recibe como parámetro un folder y retorna
 # una lista de tuplas donde el primer elemento de cada tupla es el nombre del
 # archivo y el segundo es una línea del archivo. La función convierte a tuplas
 # todas las lineas de cada uno de los archivos. La función es genérica y debe
@@ -13,8 +13,22 @@
 #     ('text2.txt'. 'hypotheses.')
 #   ]
 #
+import glob
+import fileinput
+
+
 def load_input(input_directory):
-    pass
+
+    sequence = []
+    filenames = glob.glob(input_directory + '/*')
+    with fileinput.input(files=filenames) as f:
+        for line in f:
+            sequence.append((fileinput.filename(), line))
+    return sequence
+
+#filenames = load_input('input')
+#print(filenames)
+    
 
 
 #
@@ -30,7 +44,17 @@ def load_input(input_directory):
 #   ]
 #
 def mapper(sequence):
-    pass
+    new_sequence = []
+    for _, text in sequence:
+        words = text.split()
+        for word in words:
+            new_sequence.append((word, 1))
+    return new_sequence
+
+
+#sequence = load_input('input')
+#sequence = mapper(sequence)
+#print(sequence)
 
 
 #
@@ -45,7 +69,14 @@ def mapper(sequence):
 #   ]
 #
 def shuffle_and_sort(sequence):
-    pass
+    sorted_sequence = sorted(sequence, key=lambda x: x[0])
+    return sorted_sequence
+
+sequence = load_input('input')
+sequence = mapper(sequence)
+sequence = shuffle_and_sort(sequence)
+#print(sequence)
+
 
 
 #
@@ -55,7 +86,26 @@ def shuffle_and_sort(sequence):
 # texto.
 #
 def reducer(sequence):
-    pass
+    
+    dict = {}
+    for key,value  in sequence:
+        if key not in dict.keys():
+            dict[key] = []
+        dict[key].append(value)
+    
+    new_sequence = []
+    for key, value in dict.items():
+        tupla = (key, sum(value))
+        new_sequence.append(tupla)
+
+    return new_sequence
+
+
+sequence = load_input('input')
+sequence = mapper(sequence)
+sequence = shuffle_and_sort(sequence)
+sequence = reducer(sequence)
+print(sequence)
 
 
 #
@@ -93,8 +143,8 @@ def job(input_directory, output_directory):
     pass
 
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     job(
         "input",
         "output",
-    )
+    )'''
